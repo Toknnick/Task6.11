@@ -11,6 +11,7 @@ namespace Task6._11
             aquarium.Work();
         }
     }
+    
     class Aquarium
     {
         public void Work()
