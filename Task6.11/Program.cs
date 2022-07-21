@@ -20,6 +20,8 @@ namespace Task6._11
         public void Work()
         {
             bool isWork = true;
+            bool isDeadFish = false;
+            int countOfDeadFishes = 0;
             Console.WriteLine("Рыбки ждали тебя.");
 
             while (isWork)
@@ -50,17 +52,23 @@ namespace Task6._11
                         break;
                 }
 
-                IsDeadFish();
+                isDeadFish = IsDeadFish(ref countOfDeadFishes);
+
+                if (isDeadFish == true)
+                {
+                    WriteSadMessage(countOfDeadFishes);
+                    countOfDeadFishes = 0;
+                }
+
                 Console.WriteLine(" \nДля продолжнения нажмите любую клавишу: \n");
                 Console.ReadKey();
                 Console.Clear();
             }
         }
 
-        private void IsDeadFish()
+        private bool IsDeadFish(ref int countOfDeadFishes)
         {
             int maxAge = 4;
-            int countOfDeadFishes = 0;
             bool isDeadFish = false;
 
             for (int i = 0; i < _fishes.Count; i++)
@@ -74,10 +82,7 @@ namespace Task6._11
                 }
             }
 
-            if (isDeadFish)
-            {
-                WriteSadMessage(countOfDeadFishes);
-            }
+            return isDeadFish;
         }
 
         private void AddFishes()
