@@ -11,7 +11,6 @@ namespace Task6._11
             aquarium.Work();
         }
     }
-    
     class Aquarium
     {
         public void Work()
@@ -127,7 +126,7 @@ namespace Task6._11
 
                         if (number < fishes.Count)
                         {
-                            fishes.RemoveAt(number );
+                            fishes.RemoveAt(number);
                             Console.WriteLine("Рыбка забрана успешно! Зачем-то...");
                             isRepeating = false;
                             AddYearsToFishes(fishes);
@@ -246,33 +245,35 @@ namespace Task6._11
             return IsExist;
         }
 
-        class Fish
+    }
+
+    class Fish
+    {
+        private int _size;
+
+        public int Age { get; private set; }
+
+        public Fish(int age, int size)
         {
-            public int Age { get; private set; }
-            private int _size;
+            Age = age;
+            _size = size;
+        }
 
-            public Fish(int age, int size)
+        public void ShowInfo(int id)
+        {
+            Console.WriteLine($"{id}. Возраст рыбки: {Age}. Занимает места: {_size}.");
+        }
+
+        public void ChangeLifeYears(int option)
+        {
+            if (option == 1)
             {
-                Age = age;
-                _size = size;
+                Age++;
             }
-
-            public void ShowInfo(int id)
+            else
             {
-                Console.WriteLine($"{id}. Возраст рыбки: {Age}. Занимает места: {_size}.");
-            }
-
-            public void ChangeLifeYears(int option)
-            {
-                if (option == 1)
-                {
-                    Age++;
-                }
-                else
-                {
-                    if (Age > 0)
-                        Age--;
-                }
+                if (Age > 0)
+                    Age--;
             }
         }
     }
