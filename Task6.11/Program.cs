@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Task6._11
@@ -11,6 +11,7 @@ namespace Task6._11
             aquarium.Work();
         }
     }
+
     class Aquarium
     {
         private List<Fish> _fishes = new List<Fish>();
@@ -19,9 +20,6 @@ namespace Task6._11
         public void Work()
         {
             bool isWork = true;
-            bool isDeadFish = false;
-            int maxAge = 4;
-            int countOfDeadFishes = 0;
             Console.WriteLine("Рыбки ждали тебя.");
 
             while (isWork)
@@ -52,27 +50,33 @@ namespace Task6._11
                         break;
                 }
 
-                for (int i = 0; i < _fishes.Count; i++)
-                {
-                    if (_fishes[i].IsMaxAge( maxAge))
-                    {
-                        isDeadFish = true;
-                        _fishes.RemoveAt(i);
-                        i--;
-                        countOfDeadFishes++;
-                    }
-                }
-
-                if (isDeadFish)
-                {
-                    WriteSadMessage(countOfDeadFishes);
-                    isDeadFish = false;
-                    countOfDeadFishes = 0;
-                }
-
+                IsDeadFish();
                 Console.WriteLine(" \nДля продолжнения нажмите любую клавишу: \n");
                 Console.ReadKey();
                 Console.Clear();
+            }
+        }
+
+        private void IsDeadFish()
+        {
+            int maxAge = 4;
+            int countOfDeadFishes = 0;
+            bool isDeadFish = false;
+
+            for (int i = 0; i < _fishes.Count; i++)
+            {
+                if (_fishes[i].IsMaxAge(maxAge))
+                {
+                    isDeadFish = true;
+                    _fishes.RemoveAt(i);
+                    i--;
+                    countOfDeadFishes++;
+                }
+            }
+
+            if (isDeadFish)
+            {
+                WriteSadMessage(countOfDeadFishes);
             }
         }
 
