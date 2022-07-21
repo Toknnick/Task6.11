@@ -13,15 +13,15 @@ namespace Task6._11
     }
     class Aquarium
     {
+        private List<Fish> _fishes = new List<Fish>();
+        private int _freePlace = 100;
+
         public void Work()
         {
-            List<Fish> fishes = new List<Fish>();
             bool isWork = true;
             bool isDeadFish = false;
             int maxAge = 4;
             int countOfDeadFishes = 0;
-            int maxSizeOfAquarium = 100;
-            int freePlace = maxSizeOfAquarium;
             Console.WriteLine("Рыбки ждали тебя.");
 
             while (isWork)
@@ -33,16 +33,16 @@ namespace Task6._11
                 switch (userInput)
                 {
                     case "1":
-                        AddFishes(fishes, ref freePlace);
+                        AddFishes();
                         break;
                     case "2":
-                        RemoveFish(fishes);
+                        RemoveFish();
                         break;
                     case "3":
-                        FeedFishes(fishes);
+                        FeedFishes();
                         break;
                     case "4":
-                        ShowOnFishes(fishes);
+                        ShowOnFishes();
                         break;
                     case "5":
                         isWork = false;
@@ -52,12 +52,13 @@ namespace Task6._11
                         break;
                 }
 
-                for (int i = 0; i < fishes.Count; i++)
+                for (int i = 0; i < _fishes.Count; i++)
                 {
-                    if (IsMaxAge(fishes, i, maxAge))
+                    if (_fishes[i].IsMaxAge( maxAge))
                     {
                         isDeadFish = true;
-                        fishes.RemoveAt(i);
+                        _fishes.RemoveAt(i);
+                        i--;
                         countOfDeadFishes++;
                     }
                 }
@@ -75,7 +76,7 @@ namespace Task6._11
             }
         }
 
-        private void AddFishes(List<Fish> fishes, ref int freePlace)
+        private void AddFishes()
         {
             bool isRepeating = true;
 
@@ -85,87 +86,94 @@ namespace Task6._11
                 Console.WriteLine($"Введите размер рыбки :");
                 string userInput = Console.ReadLine();
 
-                if (TryToParse(userInput, out int sizeOfFish))
+                if (int.TryParse(userInput, out int sizeOfFish))
                 {
-                    if (sizeOfFish <= freePlace)
+                    if (sizeOfFish <= _freePlace)
                     {
-                        freePlace -= sizeOfFish;
-                        fishes.Add(new Fish(age, sizeOfFish));
+                        _freePlace -= sizeOfFish;
+                        _fishes.Add(new Fish(age, sizeOfFish));
                         isRepeating = false;
-                        AddYearsToFishes(fishes);
+                        AddYearsToFishes();
                     }
-                    else if (freePlace >= 0)
+                    else
                     {
-                        WriteError("Не хватает места! ");
+                        WriteError("Не хватает места!");
 
-                        if (freePlace == 0)
+                        if (_freePlace == 0)
                         {
-                            isRepeating = false;
                             Console.WriteLine("Аквариум забит рыбками полностью!");
                         }
+
+                        isRepeating = false;
                     }
+                }
+                else
+                {
+                    WriteError();
                 }
             }
         }
 
-        private void RemoveFish(List<Fish> fishes)
+        private void RemoveFish()
         {
-            if (IsExistFish(fishes))
+            if (IsExistFish())
             {
                 bool isRepeating = true;
 
                 while (isRepeating)
                 {
-                    ShowOnFishes(fishes);
+                    ShowOnFishes();
                     Console.WriteLine("Выбери номер рыбки:");
                     string userInput = Console.ReadLine();
 
-                    if (TryToParse(userInput, out int number))
+                    if (int.TryParse(userInput, out int number))
                     {
                         number -= 1;
 
-                        if (number < fishes.Count)
+                        if (number < _fishes.Count)
                         {
-                            fishes.RemoveAt(number);
+                            _fishes.RemoveAt(number);
                             Console.WriteLine("Рыбка забрана успешно! Зачем-то...");
                             isRepeating = false;
-                            AddYearsToFishes(fishes);
+                            AddYearsToFishes();
                         }
                         else
                         {
                             WriteError();
                         }
                     }
+                    else
+                    {
+                        WriteError();
+                    }
                 }
             }
         }
 
-        private void FeedFishes(List<Fish> fishes)
+        private void FeedFishes()
         {
-            if (IsExistFish(fishes))
+            if (IsExistFish())
             {
-                int option = 2;
                 Console.WriteLine("Ты покормил(а) рыбок каким-то странным кормом. Ты видишь как они молодеют");
-                ChangeLifeYearsOfFishes(fishes, option);
+                ReduceLifeYearsOfFishes();
             }
         }
 
-        private void ShowOnFishes(List<Fish> fishes)
+        private void ShowOnFishes()
         {
-            if (IsExistFish(fishes))
+            if (IsExistFish())
             {
-                for (int i = 0; i < fishes.Count; i++)
+                for (int i = 0; i < _fishes.Count; i++)
                 {
-                    fishes[i].ShowInfo(i + 1);
+                    _fishes[i].ShowInfo(i + 1);
                 }
             }
         }
 
-        private void AddYearsToFishes(List<Fish> fishes)
+        private void AddYearsToFishes()
         {
-            int option = 1;
             Console.WriteLine("Вот и прошел еще один год.");
-            ChangeLifeYearsOfFishes(fishes, option);
+            AddLifeYearsOfFishes();
         }
 
         private bool Break()
@@ -175,37 +183,20 @@ namespace Task6._11
             return isWork;
         }
 
-        private void ChangeLifeYearsOfFishes(List<Fish> fishes, int option)
+        private void AddLifeYearsOfFishes()
         {
-            for (int i = 0; i < fishes.Count; i++)
+            for (int i = 0; i < _fishes.Count; i++)
             {
-                fishes[i].ChangeLifeYears(option);
+                _fishes[i].AddLifeYears();
             }
         }
 
-        private bool IsMaxAge(List<Fish> fishes, int numberOfFish, int maxAge)
+        private void ReduceLifeYearsOfFishes()
         {
-            bool isMaxAge = false;
-
-            if (fishes[numberOfFish].Age >= maxAge)
+            for (int i = 0; i < _fishes.Count; i++)
             {
-                isMaxAge = true;
+                _fishes[i].ReduceLifeYears();
             }
-
-            return isMaxAge;
-        }
-
-        private bool TryToParse(string userInput, out int number)
-        {
-            bool isParse = true;
-
-            if (int.TryParse(userInput, out number) == false)
-            {
-                isParse = false;
-                WriteError();
-            }
-
-            return isParse;
         }
 
         private void WriteError(string text = "Странное число...  Попробуйте еще раз ")
@@ -229,20 +220,20 @@ namespace Task6._11
             Console.WriteLine($"Плохой день. Сегодня {text}.");
         }
 
-        private bool IsExistFish(List<Fish> fishes)
+        private bool IsExistFish()
         {
-            bool IsExist = false;
+            bool isExist = false;
 
-            if (fishes.Count > 0)
+            if (_fishes.Count > 0)
             {
-                IsExist = true;
+                isExist = true;
             }
             else
             {
                 Console.WriteLine("Аквариум пуст!");
             }
 
-            return IsExist;
+            return isExist;
         }
 
     }
@@ -264,17 +255,28 @@ namespace Task6._11
             Console.WriteLine($"{id}. Возраст рыбки: {Age}. Занимает места: {_size}.");
         }
 
-        public void ChangeLifeYears(int option)
+        public void AddLifeYears()
         {
-            if (option == 1)
-            {
                 Age++;
-            }
-            else
-            {
-                if (Age > 0)
-                    Age--;
-            }
         }
+
+        public void ReduceLifeYears()
+        {
+            if(Age > 0)
+            Age--;
+        }
+
+        public bool IsMaxAge(int maxAge)
+        {
+            bool isMaxAge = false;
+
+            if (Age >= maxAge)
+            {
+                isMaxAge = true;
+            }
+
+            return isMaxAge;
+        }
+
     }
 }
